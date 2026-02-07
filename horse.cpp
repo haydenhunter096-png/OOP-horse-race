@@ -1,45 +1,71 @@
-// horse.cpp
 #include <iostream>
 #include <random>
 #include "horse.h"
 
+// Setup random engine
 std::random_device rd;
 std::uniform_int_distribution<int> dist(0, 1);
 
-Horse::Horse(){
-    Horse::position = 0;
-    Horse::index = 0;
-    Horse::tracklength = 15;
+// 1. HORSE CONSTRUCTOR
+Horse::Horse() {
+    position = 0;
+    index = 0;
+    tracklength = 15;
+}
 
-} // end constructor
+// 2. HORSE INIT
+void Horse::init(int index, int trackLength) {
+    this->position = 0;
+    this->index = index;
+    this->tracklength = trackLength;
+}
 
-void Horse::init(int index, int trackLength){
-    Horse::position = 0;
-    Horse::index = index;
-    Horse::tracklength = trackLength;
-} // end init
-
-void Horse::advance(){
+// 3. HORSE ADVANCE
+void Horse::advance() {
     int coin = dist(rd);
-    Horse::position += coin;
-} // end advance
+    position += coin;
+}
 
-void Horse::printLane(){
-    for (int pos = 0; pos < Horse::tracklength; pos++){
-        if (pos == Horse::position){
-            std::cout << Horse::index;
+// 4. HORSE PRINTLANE
+void Horse::printLane() {
+    for (int pos = 0; pos < tracklength; pos++) {
+        if (pos == position) {
+            std::cout << index;
         } else {
             std::cout << ".";
-        } // end if
-    } // end for
+        }
+    }
     std::cout << std::endl;
-} // end printLane
+}
 
-bool Horse::isWinner(){
-    bool result = false;
-    if (Horse::position >= Horse::tracklength){
-        result = true;
-        std::cout << "Horse " << Horse::index << " wins!" << std::endl;
-    } // end if
-    return result;
-} // end isWinner
+// 5. HORSE ISWINNER
+bool Horse::isWinner() {
+    if (position >= tracklength) {
+        return true;
+    }
+    return false;
+}
+
+// --- RACE IMPLEMENTATION ---
+
+Race::Race() {
+    for (int i = 0; i < NUM_HORSES; i++) {
+        horses[i].init(i, 30); 
+    }
+}
+
+void Race::startRace() {
+    bool keepGoing = true;
+    while (keepGoing) {
+        for (int i = 0; i < NUM_HORSES; i++) {
+            horses[i].advance();
+            horses[i].printLane();
+            if (horses[i].isWinner()) {
+                std::cout << "Horse " << i << " wins!" << std::endl;
+                keepGoing = false;
+                break; // Stop checking other horses this round
+            }
+        }
+        std::cout << "========================================" << std::endl;
+    }
+}
